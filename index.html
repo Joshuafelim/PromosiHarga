@@ -10,69 +10,75 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <!-- Google Font Inter & Plus Jakarta Sans -->
+    <!-- Google Font Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-        }
-        .custom-gradient-bg {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+            background-color: #0f172a;
+            color: #f8fafc;
         }
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .glow-effect {
-            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.4);
+        .team-card-active {
+            box-shadow: 0 0 20px -2px rgba(99, 102, 241, 0.4);
         }
         /* Custom scrollbars */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: #1e293b;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #475569;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: #64748b;
+        }
+        .animate-pulse-subtle {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-indigo-500 selection:text-white bg-slate-950">
 
-    <!-- Top Header / Bar -->
-    <header class="bg-indigo-950 text-white border-b border-indigo-800 sticky top-0 z-50 shadow-md">
+    <!-- Top Header / Navigation -->
+    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="confirmReturnHome()">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-indigo-500 flex items-center justify-center font-black text-xl shadow-md">
-                    <i class="fa-solid fa-tags text-white"></i>
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showCustomConfirm('Kembali ke Menu Utama?', 'Progres permainan saat ini akan hilang.', restartGame)">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-indigo-600 flex items-center justify-center font-black text-xl shadow-md text-slate-950">
+                    <i class="fa-solid fa-tags"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-lg sm:text-xl tracking-tight leading-none text-white">
-                        Harga Promosi <span class="text-amber-400 text-xs sm:text-sm font-semibold px-2 py-0.5 rounded bg-indigo-900/80 border border-indigo-700 ml-1">Edisi Indonesia</span>
+                    <h1 class="font-extrabold text-base sm:text-xl tracking-tight leading-none text-white">
+                        Harga Promosi <span class="text-amber-400 text-xs font-semibold px-2 py-0.5 rounded bg-indigo-950 border border-indigo-700/60 ml-1">Edisi Indonesia</span>
                     </h1>
-                    <p class="text-xs text-indigo-300 hidden sm:block">The Price of Promotion - Game Edukasi Strategi Pemasaran</p>
+                    <p class="text-xs text-slate-400 hidden sm:block">The Price of Promotion - Game Edukasi Strategi Pemasaran</p>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-2 sm:space-x-4">
-                <button id="soundToggleBtn" onclick="toggleSound()" class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 text-xs sm:text-sm font-medium transition flex items-center gap-2">
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <button id="soundToggleBtn" onclick="toggleSound()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium transition flex items-center gap-1.5">
                     <i id="soundIcon" class="fa-solid fa-volume-high text-amber-400"></i>
                     <span id="soundText" class="hidden sm:inline">Suara: ON</span>
                 </button>
-                <button onclick="toggleTeacherGuide()" class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 text-xs sm:text-sm font-medium transition text-amber-300 flex items-center gap-2">
+                <button onclick="toggleTeacherGuide()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium transition text-amber-300 flex items-center gap-1.5">
                     <i class="fa-solid fa-graduation-cap"></i>
-                    <span class="hidden sm:inline">Panduan Guru</span>
+                    <span class="hidden sm:inline">Panduan Guru & Katalog</span>
                 </button>
-                <button onclick="toggleFullscreen()" class="p-2 rounded-lg bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 text-slate-300 hover:text-white transition" title="Layar Penuh">
+                <button onclick="toggleFullscreen()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" title="Layar Penuh">
                     <i class="fa-solid fa-expand"></i>
                 </button>
             </div>
@@ -80,76 +86,82 @@
     </header>
 
     <!-- Main Dynamic Content Container -->
-    <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 w-full flex-grow flex flex-col justify-center">
+    <main class="max-w-7xl mx-auto px-4 py-6 sm:py-8 w-full flex-grow flex flex-col justify-center">
+
+        <!-- Notification Toast Container -->
+        <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
         <!-- 1. SETUP SCREEN -->
         <section id="setupScreen" class="block space-y-8 max-w-3xl mx-auto w-full">
             <div class="text-center space-y-3">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider">
-                    <i class="fa-solid fa-award"></i> Kurikulum Pemasaran IPEKA & IGCSE/IAL Business
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-900/60 text-indigo-300 text-xs font-bold uppercase tracking-wider border border-indigo-700/50">
+                    <i class="fa-solid fa-award text-amber-400"></i> Kurikulum Pemasaran Edexcel IGCSE/IAL & IPEKA Grade 10
                 </div>
-                <h2 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
-                    Berapa Biaya <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-amber-500">Promosinya?</span>
+                <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+                    Berapa Biaya <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-indigo-400 to-cyan-400">Promosinya?</span>
                 </h2>
-                <p class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto">
-                    Uji pemahaman siswa tentang estimasi anggaran Above-The-Line (ATL) & Below-The-Line (BTL) di pasaran Indonesia nyata (2025–2026).
+                <p class="text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
+                    Uji estimasi anggaran Above-The-Line (ATL), Below-The-Line (BTL), dan Digital Marketing di pasar nyata Indonesia (2025–2026). Semua tim menjawab bersama di setiap ronde!
                 </p>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
                 <!-- Round Selector -->
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-list-ol text-indigo-600 mr-1"></i> Jumlah Ronde Game
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-list-ol text-indigo-400 mr-1"></i> 1. Pilih Jumlah Ronde
                     </label>
                     <div class="grid grid-cols-3 gap-3">
-                        <button type="button" onclick="selectRounds(5)" id="roundsBtn5" class="round-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex flex-col items-center border-indigo-600 bg-indigo-50 text-indigo-700">
-                            <span class="text-xl">5</span>
-                            <span class="text-xs font-normal">Cepat (5 Menit)</span>
+                        <button type="button" onclick="selectRounds(5)" id="roundsBtn5" class="round-select-btn py-3 px-4 rounded-2xl font-bold border-2 text-center transition flex flex-col items-center border-indigo-500 bg-indigo-900/40 text-indigo-200">
+                            <span class="text-2xl font-black">5</span>
+                            <span class="text-xs font-normal text-slate-400">Cepat (5 Menit)</span>
                         </button>
-                        <button type="button" onclick="selectRounds(10)" id="roundsBtn10" class="round-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex flex-col items-center border-slate-200 hover:border-indigo-300 text-slate-700">
-                            <span class="text-xl">10</span>
-                            <span class="text-xs font-normal">Standar (10 Menit)</span>
+                        <button type="button" onclick="selectRounds(10)" id="roundsBtn10" class="round-select-btn py-3 px-4 rounded-2xl font-bold border-2 text-center transition flex flex-col items-center border-slate-700 bg-slate-800/40 hover:border-slate-500 text-slate-300">
+                            <span class="text-2xl font-black">10</span>
+                            <span class="text-xs font-normal text-slate-400">Standar (10 Menit)</span>
                         </button>
-                        <button type="button" onclick="selectRounds(15)" id="roundsBtn15" class="round-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex flex-col items-center border-slate-200 hover:border-indigo-300 text-slate-700">
-                            <span class="text-xl">15</span>
-                            <span class="text-xs font-normal">Lengkap (15 Menit)</span>
+                        <button type="button" onclick="selectRounds(15)" id="roundsBtn15" class="round-select-btn py-3 px-4 rounded-2xl font-bold border-2 text-center transition flex flex-col items-center border-slate-700 bg-slate-800/40 hover:border-slate-500 text-slate-300">
+                            <span class="text-2xl font-black">15</span>
+                            <span class="text-xs font-normal text-slate-400">Lengkap (15 Menit)</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Mode Selector -->
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        <i class="fa-solid fa-users text-indigo-600 mr-1"></i> Mode Permainan
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-users text-indigo-400 mr-1"></i> 2. Pilih Mode Permainan
                     </label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button" onclick="selectMode('solo')" id="modeBtnSolo" class="mode-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-indigo-600 bg-indigo-50 text-indigo-700">
+                        <button type="button" onclick="selectMode('solo')" id="modeBtnSolo" class="mode-select-btn py-3.5 px-4 rounded-2xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-indigo-500 bg-indigo-900/40 text-indigo-200">
                             <i class="fa-solid fa-user text-lg"></i> Solo / Individu
                         </button>
-                        <button type="button" onclick="selectMode('team')" id="modeBtnTeam" class="mode-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-slate-200 hover:border-indigo-300 text-slate-700">
-                            <i class="fa-solid fa-people-group text-lg"></i> Kompetisi Tim (Proyektor)
+                        <button type="button" onclick="selectMode('team')" id="modeBtnTeam" class="mode-select-btn py-3.5 px-4 rounded-2xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-slate-700 bg-slate-800/40 hover:border-slate-500 text-slate-300">
+                            <i class="fa-solid fa-people-group text-lg"></i> Kompetisi Tim (Shared Screen)
                         </button>
                     </div>
                 </div>
 
                 <!-- Team Setup Container -->
-                <div id="teamSetupContainer" class="hidden space-y-4 pt-4 border-t border-slate-100">
+                <div id="teamSetupContainer" class="hidden space-y-4 pt-4 border-t border-slate-800">
                     <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-slate-700">Jumlah Tim Kompetisi (2-5 Tim):</label>
+                        <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Jumlah Tim Kompetisi (2-5 Tim):</label>
                         <div class="flex items-center space-x-2">
-                            <button type="button" onclick="changeTeamCount(-1)" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-800 font-bold hover:bg-slate-300 transition">-</button>
-                            <span id="teamCountDisplay" class="font-extrabold text-lg w-6 text-center">2</span>
-                            <button type="button" onclick="changeTeamCount(1)" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-800 font-bold hover:bg-slate-300 transition">+</button>
+                            <button type="button" onclick="changeTeamCount(-1)" class="w-8 h-8 rounded-xl bg-slate-800 text-white font-bold border border-slate-700 hover:bg-slate-700 transition flex items-center justify-center">-</button>
+                            <span id="teamCountDisplay" class="font-black text-lg w-6 text-center text-amber-400">3</span>
+                            <button type="button" onclick="changeTeamCount(1)" class="w-8 h-8 rounded-xl bg-slate-800 text-white font-bold border border-slate-700 hover:bg-slate-700 transition flex items-center justify-center">+</button>
                         </div>
                     </div>
                     <div id="teamNamesInputs" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <!-- Dynamic team input fields -->
                     </div>
+                    <p class="text-xs text-slate-400 italic bg-indigo-950/40 p-3 rounded-xl border border-indigo-800/40">
+                        📌 <strong>Aturan Tim:</strong> Pada setiap ronde, semua tim akan menginput tebakan secara bersamaan sebelum tombol "Reveal the Cost" ditekan.
+                    </p>
                 </div>
 
                 <!-- Start Button -->
-                <button onclick="startGame()" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-lg tracking-wide shadow-lg shadow-amber-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition flex items-center justify-center gap-2">
+                <button onclick="startGame()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-lg tracking-wide shadow-lg shadow-amber-500/20 transform hover:-translate-y-0.5 active:translate-y-0 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-play"></i> MULAI PERMAINAN
                 </button>
             </div>
@@ -157,127 +169,140 @@
 
         <!-- 2. GAMEPLAY SCREEN -->
         <section id="gameplayScreen" class="hidden space-y-6">
-            <!-- Header Status Bar -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-slate-200 gap-4">
-                <div class="flex items-center space-x-3">
-                    <span id="roundIndicator" class="px-3 py-1.5 rounded-xl bg-indigo-100 text-indigo-800 font-extrabold text-sm border border-indigo-200">
+            <!-- Header Status & Live Mini Leaderboard -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between glass-card p-4 rounded-2xl gap-4">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span id="roundIndicator" class="px-3 py-1.5 rounded-xl bg-indigo-900/80 text-indigo-200 font-extrabold text-xs sm:text-sm border border-indigo-700/60">
                         Ronde 1 dari 5
                     </span>
-                    <span id="categoryBadge" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                    <span id="categoryBadge" class="px-3 py-1.5 rounded-xl bg-slate-800 text-amber-400 font-bold text-xs border border-slate-700">
                         BELOW-THE-LINE (BTL)
                     </span>
                 </div>
 
-                <!-- Active Turn Badge -->
-                <div id="activeTurnBadge" class="flex items-center space-x-2 bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-300 px-4 py-1.5 rounded-xl text-amber-900 font-bold text-sm">
-                    <i class="fa-solid fa-crown text-amber-500"></i>
-                    <span>Giliran: <strong id="currentTurnName" class="text-amber-800">Tim Alpha</strong></span>
-                </div>
-
-                <!-- Dynamic Team Score Strip -->
-                <div id="miniScoreboard" class="flex items-center gap-2 overflow-x-auto py-1">
-                    <!-- Dynamic mini score cards -->
+                <!-- Mini Leaderboard Bar -->
+                <div class="flex items-center space-x-2 overflow-x-auto py-1" id="miniLeaderboardContainer">
+                    <!-- Dynamic team badges with current scores -->
                 </div>
             </div>
 
-            <!-- Main Question & Interaction Card -->
-            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-10 relative overflow-hidden">
-                <!-- Question Title & Scenario -->
-                <div class="space-y-3 mb-8">
-                    <div class="flex items-center gap-2 text-indigo-600 text-xs sm:text-sm font-bold uppercase tracking-wider">
-                        <i id="questionTypeIcon" class="fa-solid fa-calculator"></i>
-                        <span id="questionTypeLabel">TEBAK BIAYA PROMOSI</span>
-                    </div>
-                    <h2 id="questionTitle" class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
-                        Sewa Badut / Character Bagikan Sample seharian di Mall
-                    </h2>
-                    <p id="questionDescription" class="text-slate-600 text-base sm:text-lg">
-                        Berapa perkiraan total biaya untuk menyewa 1 kostum karakter unik lengkap dengan orangnya selama 1 hari penuh di mall Jakarta untuk promosi toko minuman baru?
-                    </p>
+            <!-- Main Question Header Card -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-4">
+                <div class="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
+                    <i id="questionTypeIcon" class="fa-solid fa-calculator"></i>
+                    <span id="questionTypeLabel">TEBAK BIAYA PROMOSI</span>
+                </div>
+                <h2 id="questionTitle" class="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
+                    Sewa Badut Maskot Bagikan Sample Seharian di Mall
+                </h2>
+                <p id="questionDescription" class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-4xl">
+                    Berapa perkiraan total biaya untuk menyewa 1 kostum karakter unik lengkap dengan orangnya selama 1 hari penuh (8 jam) di mall Jakarta untuk promosi produk baru?
+                </p>
+            </div>
+
+            <!-- GAMEPLAY INTERACTION TYPE 1: GUESS THE COST (ALL TEAMS INPUT SIMULTANEOUSLY) -->
+            <div id="guessCostSection" class="space-y-6">
+                <div class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between px-1">
+                    <span><i class="fa-solid fa-pen-to-square text-amber-400 mr-1"></i> Masukkan Tebakan Harga Semua Tim (dalam Rupiah):</span>
+                    <span id="lockStatusCount" class="text-indigo-400 font-semibold">0 dari 3 Tim Mengunci Jawaban</span>
                 </div>
 
-                <!-- GAMEPLAY INTERACTION TYPE 1: GUESS THE COST (NUMERIC INPUT) -->
-                <div id="guessCostContainer" class="space-y-6">
-                    <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center space-y-4">
-                        <label class="block text-xs font-bold uppercase text-slate-500 tracking-wider">Masukkan Tebakan Harga Anda:</label>
-                        <div class="flex items-center justify-center">
-                            <span class="text-3xl sm:text-5xl font-black text-slate-400 mr-2">Rp</span>
-                            <input type="text" id="currencyInput" placeholder="0" class="text-3xl sm:text-5xl font-black text-indigo-900 bg-transparent border-b-4 border-indigo-600 focus:outline-none focus:border-indigo-800 text-center w-full max-w-md tracking-tight py-1" oninput="formatRupiahInput(this)">
-                        </div>
-
-                        <!-- Quick Increment Buttons -->
-                        <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
-                            <button onclick="addAmount(100000)" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:border-indigo-500 text-slate-700 text-xs font-bold shadow-sm transition">+ Rp 100 Ribu</button>
-                            <button onclick="addAmount(500000)" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:border-indigo-500 text-slate-700 text-xs font-bold shadow-sm transition">+ Rp 500 Ribu</button>
-                            <button onclick="addAmount(1000000)" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:border-indigo-500 text-slate-700 text-xs font-bold shadow-sm transition">+ Rp 1 Juta</button>
-                            <button onclick="addAmount(10000000)" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:border-indigo-500 text-slate-700 text-xs font-bold shadow-sm transition">+ Rp 10 Juta</button>
-                            <button onclick="clearAmount()" class="px-3 py-1.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 text-xs font-bold transition"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-                        </div>
-                    </div>
-
-                    <button onclick="submitGuessCost()" class="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-lg tracking-wide shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-lock"></i> KUNCI & BUKA BIAYA ASLI
-                    </button>
+                <!-- Dynamic Team Guess Cards Grid -->
+                <div id="teamsGuessGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic team cards with individual inputs and lock toggles -->
                 </div>
 
-                <!-- GAMEPLAY INTERACTION TYPE 2: MULTIPLE CHOICE COMPARISON -->
-                <div id="choiceContainer" class="hidden space-y-6">
-                    <p class="text-sm font-bold text-slate-700 uppercase tracking-wider text-center">Pilihlah Opsi Promosi yang Dimaksud:</p>
-                    <div id="choiceOptionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Dynamic Option Cards -->
+                <!-- Reveal Button -->
+                <button id="revealGuessBtn" onclick="submitAllGuessCost()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-extrabold text-lg tracking-wide shadow-xl shadow-indigo-600/30 transition flex items-center justify-center gap-2 border border-indigo-500/50">
+                    <i class="fa-solid fa-eye"></i> BUKA BIAYA ASLI & HITUNG POIN SEMUA TIM
+                </button>
+            </div>
+
+            <!-- GAMEPLAY INTERACTION TYPE 2: MULTIPLE CHOICE COMPARISON (ALL TEAMS SELECT SIMULTANEOUSLY) -->
+            <div id="choiceSection" class="hidden space-y-6">
+                <!-- Option Cards Visual Display -->
+                <div class="space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Pilihan Opsi Strategi Promosi:</span>
+                    <div id="choiceOptionsVisualGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Dynamic promo option cards -->
                     </div>
                 </div>
+
+                <!-- Team Choice Selectors Grid -->
+                <div class="space-y-3 pt-4 border-t border-slate-800">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Pilihan Masing-Masing Tim:</span>
+                    <div id="teamsChoiceGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Dynamic team choice radio/button selectors -->
+                    </div>
+                </div>
+
+                <!-- Reveal Button -->
+                <button id="revealChoiceBtn" onclick="submitAllChoices()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-lg tracking-wide shadow-xl shadow-amber-500/20 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-eye"></i> BUKA BIAYA ASLI & EVALUASI
+                </button>
             </div>
         </section>
 
-        <!-- 3. REVEAL & TEACHING NOTE MODAL/CARD -->
-        <div id="revealModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-            <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 sm:p-8 space-y-6 border border-slate-100 transform transition-all my-8">
-                <!-- Header Status -->
-                <div class="text-center space-y-2 border-b border-slate-100 pb-4">
-                    <div id="resultBadge" class="inline-block px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">
-                        Tebakan Luar Biasa!
+        <!-- 3. REVEAL & TEACHING NOTE MODAL -->
+        <div id="revealModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+            <div class="glass-card rounded-3xl max-w-4xl w-full p-6 sm:p-8 space-y-6 border border-slate-700 shadow-2xl my-8">
+                <!-- Header -->
+                <div class="text-center space-y-2 border-b border-slate-800 pb-4">
+                    <div id="resultBadge" class="inline-block px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-700">
+                        Hasil Evaluasi Ronde
                     </div>
-                    <h3 class="text-2xl sm:text-3xl font-black text-slate-900" id="revealTitle">Hasil Ronde</h3>
-                    <p class="text-sm text-slate-500" id="teamScoreEarnedText">Tim Alpha memperoleh <strong class="text-indigo-600 font-extrabold text-base" id="pointsEarned">850 Poin</strong></p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-white" id="revealTitle">Hasil Buka Harga Promosi</h3>
+                    <p class="text-xs sm:text-sm text-slate-400" id="revealSubTitle">Perbandingan tebakan semua tim dengan realita biaya pasar Indonesia 2025–2026</p>
                 </div>
 
-                <!-- Price Comparison Visual Box -->
-                <div id="priceComparisonBox" class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 rounded-2xl p-4 border border-slate-200">
-                    <div class="p-4 bg-white rounded-xl border border-slate-200 text-center space-y-1">
-                        <span class="text-xs font-bold uppercase text-slate-400">Tebakan Anda</span>
-                        <div id="userGuessDisplay" class="text-xl sm:text-2xl font-black text-slate-700">Rp 1.000.000</div>
+                <!-- Real Cost & Range Highlight Box -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-900/90 rounded-2xl p-4 border border-slate-800">
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center space-y-1">
+                        <span class="text-xs font-bold uppercase text-slate-400">Biaya Pasar Nyata (Rata-Rata)</span>
+                        <div id="realCostDisplay" class="text-2xl sm:text-4xl font-black text-amber-400">Rp 1.500.000</div>
                     </div>
-                    <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-center space-y-1">
-                        <span class="text-xs font-bold uppercase text-amber-600">Biaya Pasar Nyata (Rata-Rata)</span>
-                        <div id="realCostDisplay" class="text-2xl sm:text-3xl font-black text-amber-700">Rp 1.500.000</div>
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center space-y-1">
+                        <span class="text-xs font-bold uppercase text-indigo-400">Kisaran Harga Wajar Pasar</span>
+                        <div id="typicalRangeDisplay" class="text-lg sm:text-2xl font-extrabold text-indigo-200">Rp 800.000 – Rp 2.500.000</div>
                     </div>
                 </div>
 
-                <!-- Typical Market Range -->
-                <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 sm:p-4 text-center">
-                    <span class="text-xs font-bold text-indigo-500 uppercase tracking-wide">Kisaran Harga Wajar Pasar Indonesia (2025–2026):</span>
-                    <div id="typicalRangeDisplay" class="text-base sm:text-lg font-extrabold text-indigo-900 mt-0.5">
-                        Rp 800.000 – Rp 2.500.000
+                <!-- Comparative Teams Results Table -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Perolehan Poin Ronde Ini:</h4>
+                    <div class="overflow-x-auto rounded-2xl border border-slate-800">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-900 text-slate-400 font-bold border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3">Nama Tim</th>
+                                    <th class="p-3">Tebakan / Pilihan</th>
+                                    <th class="p-3">Akurasi / Status</th>
+                                    <th class="p-3 text-right">Poin Diperoleh</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamsRevealTableBody" class="divide-y divide-slate-800/60 bg-slate-950/60">
+                                <!-- Dynamic round reveal table rows -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
                 <!-- Teaching Note Box (Catatan Pemasaran) -->
-                <div class="bg-amber-50/80 border-l-4 border-amber-500 rounded-r-2xl p-5 space-y-2">
-                    <div class="flex items-center gap-2 text-amber-900 font-extrabold text-sm sm:text-base">
-                        <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i>
+                <div class="bg-amber-950/40 border-l-4 border-amber-500 rounded-r-2xl p-5 space-y-2 border-t border-b border-r border-amber-900/40">
+                    <div class="flex items-center gap-2 text-amber-400 font-extrabold text-sm sm:text-base">
+                        <i class="fa-solid fa-lightbulb text-amber-400 text-lg"></i>
                         <span>CATATAN STRATEGI PEMASARAN (TEACHING NOTE)</span>
                     </div>
-                    <p id="teachingNoteText" class="text-slate-700 text-sm sm:text-base leading-relaxed">
-                        Murah dan langsung menarik perhatian orang yang lewat di lokasi spesifik, namun memiliki jangkauan (reach) yang sangat terbatas dan tidak tahan lama. Sangat cocok untuk *local grand opening* atau pembagian *free sample*.
+                    <p id="teachingNoteText" class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                        Murah dan langsung menarik perhatian orang yang lewat di lokasi spesifik, namun memiliki jangkauan (reach) terbatas.
                     </p>
-                    <div id="businessTermsBadge" class="flex flex-wrap gap-2 pt-2">
+                    <div id="businessTermsBadge" class="flex flex-wrap gap-1.5 pt-2">
                         <!-- Business terms tags -->
                     </div>
                 </div>
 
                 <!-- Next Button -->
-                <button onclick="nextRound()" class="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-lg tracking-wide shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+                <button onclick="nextRound()" class="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-base sm:text-lg tracking-wide shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
                     <span>Lanjut ke Ronde Berikutnya</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
@@ -287,17 +312,17 @@
         <!-- 4. FINAL RESULTS & SUMMARY SCREEN -->
         <section id="resultsScreen" class="hidden space-y-8 max-w-4xl mx-auto w-full">
             <div class="text-center space-y-3">
-                <div class="inline-block p-4 rounded-full bg-amber-100 text-amber-600 text-4xl mb-2 animate-bounce">
+                <div class="inline-block p-4 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-5xl mb-2 animate-bounce">
                     <i class="fa-solid fa-trophy"></i>
                 </div>
-                <h2 class="text-3xl sm:text-5xl font-black text-slate-900">Permainan Selesai!</h2>
-                <p class="text-slate-600">Berikut adalah papan skor akhir dan ringkasan efektivitas biaya promosi.</p>
+                <h2 class="text-3xl sm:text-5xl font-black text-white">Permainan Selesai!</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Selamat! Berikut adalah Papan Skor Akhir dan Evaluasi Efektivitas Biaya Promosi.</p>
             </div>
 
             <!-- Leaderboard Card -->
-            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
-                <h3 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-list-ol text-indigo-600"></i> Papan Skor Akhir
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+                <h3 class="text-xl font-extrabold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-list-ol text-amber-400"></i> Papan Skor Akhir Kompetisi
                 </h3>
                 <div id="finalLeaderboard" class="space-y-3">
                     <!-- Dynamic Leaderboard Items -->
@@ -305,19 +330,19 @@
             </div>
 
             <!-- Marketing Reflection Card for Classroom Discussion -->
-            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border border-indigo-800/60 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 font-black text-2xl flex items-center justify-center">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 font-black text-2xl flex items-center justify-center flex-shrink-0">
                         <i class="fa-solid fa-comments"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-extrabold text-white">Diskusi Evaluasi Pemasaran</h3>
-                        <p class="text-xs text-indigo-200">Bahan Refleksi & Argumentasi Rencana Bisnis / Marketing Plan</p>
+                        <h3 class="text-lg sm:text-xl font-extrabold text-white">Diskusi Refleksi Strategi Pemasaran</h3>
+                        <p class="text-xs text-indigo-300">Bahan Ulasan & Justifikasi Rencana Bisnis (Marketing Plan Exam)</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div class="bg-indigo-950/80 rounded-2xl p-5 border border-indigo-800 space-y-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 space-y-2">
                         <h4 class="font-bold text-amber-400 flex items-center gap-2">
                             <i class="fa-solid fa-bullseye"></i> High ROI & Targeted (BTL / Digital)
                         </h4>
@@ -325,7 +350,7 @@
                             Metode seperti <strong>Social Media Ads, Influencer Micro, & Event Booth</strong> memberikan biaya masuk relatif terjangkau dengan konversi tinggi ke target audiens spesifik.
                         </p>
                     </div>
-                    <div class="bg-indigo-950/80 rounded-2xl p-5 border border-indigo-800 space-y-2">
+                    <div class="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 space-y-2">
                         <h4 class="font-bold text-amber-400 flex items-center gap-2">
                             <i class="fa-solid fa-tower-broadcast"></i> Mass Brand Awareness (ATL)
                         </h4>
@@ -335,17 +360,17 @@
                     </div>
                 </div>
 
-                <div class="p-4 bg-indigo-800/40 rounded-xl border border-indigo-700/50 text-xs text-indigo-200">
-                    <strong class="text-amber-300">Tips Ujian Business Studies:</strong> Saat menyusun Rencana Pemasaran (Marketing Plan), selalu pertimbangkan <em>Budget Constraint</em>, <em>Target Market Alignment</em>, dan <em>Cost-per-Reach</em> saat memilih antara ATL dan BTL.
+                <div class="p-4 bg-indigo-950/80 rounded-xl border border-indigo-800/80 text-xs text-indigo-200">
+                    <strong class="text-amber-400">Tips Ujian Edexcel / IAL Business:</strong> Saat menyusun Rencana Pemasaran (Marketing Plan), selalu pertimbangkan <em>Budget Constraint</em>, <em>Target Market Alignment</em>, dan <em>Cost-per-Reach</em> saat memilih antara ATL dan BTL.
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-4">
-                <button onclick="restartGame()" class="flex-1 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-base transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30">
+                <button onclick="restartGame()" class="flex-1 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-base transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30">
                     <i class="fa-solid fa-rotate-right"></i> Main Lagi
                 </button>
-                <button onclick="toggleTeacherGuide()" class="flex-1 py-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-base transition flex items-center justify-center gap-2">
+                <button onclick="toggleTeacherGuide()" class="flex-1 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-base transition flex items-center justify-center gap-2 border border-slate-700">
                     <i class="fa-solid fa-book-open"></i> Buka Katalog Soal & Biaya
                 </button>
             </div>
@@ -354,37 +379,37 @@
     </main>
 
     <!-- TEACHER GUIDE & DATABASE MODAL -->
-    <div id="teacherModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col border border-slate-100">
+    <div id="teacherModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col border border-slate-700 shadow-2xl">
             <!-- Header -->
-            <div class="p-6 border-b border-slate-200 flex items-center justify-between">
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                    <div class="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold">
                         <i class="fa-solid fa-graduation-cap text-xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-extrabold text-slate-900">Panduan Guru & Bank Data Harga 2025–2026</h3>
-                        <p class="text-xs text-slate-500">Pedoman mengajar untuk guru Ekonomi & Bisnis SMA</p>
+                        <h3 class="text-lg sm:text-xl font-extrabold text-white">Panduan Guru & Bank Data Harga 2025–2026</h3>
+                        <p class="text-xs text-slate-400">Pedoman mengajar untuk guru Ekonomi & Bisnis SMA</p>
                     </div>
                 </div>
-                <button onclick="toggleTeacherGuide()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center transition">
+                <button onclick="toggleTeacherGuide()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-bold flex items-center justify-center transition border border-slate-700">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <!-- Scrollable Content -->
             <div class="p-6 overflow-y-auto space-y-6 flex-grow">
-                <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 text-sm text-amber-900 space-y-2">
-                    <h4 class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Cara Penggunaan di Kelas:</h4>
-                    <p class="text-xs text-amber-800">
-                        1. Tampilkan game di layar Proyektor / Smart TV depan kelas.<br>
+                <div class="bg-amber-950/40 rounded-2xl p-4 border border-amber-800/60 text-xs sm:text-sm text-amber-200 space-y-2">
+                    <h4 class="font-bold flex items-center gap-2 text-amber-400"><i class="fa-solid fa-circle-info"></i> Petunjuk Penggunaan di Kelas:</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        1. Tampilkan game di proyektor / Smart TV depan kelas.<br>
                         2. Bagi siswa menjadi 2–5 Tim kelompok diskusi.<br>
-                        3. Minta tiap tim mendiskusikan perkiraan biaya promosi berdasarkan harga pasar nyata Jakarta/Indonesia saat ini.<br>
-                        4. Gunakan "Teaching Note" setelah setiap jawaban sebagai bahan ulasan materi Above The Line (ATL) vs Below The Line (BTL).
+                        3. Semua tim memasukkan tebakan mereka secara bersamaan pada form yang tersedia.<br>
+                        4. Klik "Buka Biaya Asli" untuk memunculkan tabel perbandingan poin dan membahas Teaching Note bersama.
                     </p>
                 </div>
 
-                <h4 class="font-extrabold text-slate-900 text-base">Katalog 15 Metode Promosi Indonesia & Rincian Harga:</h4>
+                <h4 class="font-extrabold text-white text-sm sm:text-base">Katalog 15 Metode Promosi Indonesia & Rincian Harga Benchmark:</h4>
 
                 <div id="catalogList" class="space-y-3">
                     <!-- Dynamic catalog items -->
@@ -392,29 +417,46 @@
             </div>
 
             <!-- Footer -->
-            <div class="p-4 border-t border-slate-200 bg-slate-50 rounded-b-3xl flex justify-end">
-                <button onclick="toggleTeacherGuide()" class="px-6 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 transition">
+            <div class="p-4 border-t border-slate-800 bg-slate-900/60 rounded-b-3xl flex justify-end">
+                <button onclick="toggleTeacherGuide()" class="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm transition border border-slate-700">
                     Tutup Panduan
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Custom Modal Confirm Dialog (Replaces native confirm) -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 space-y-5 border border-slate-700 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto text-2xl border border-amber-500/30">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <div class="space-y-1">
+                <h3 id="confirmModalTitle" class="text-xl font-extrabold text-white">Konfirmasi</h3>
+                <p id="confirmModalMessage" class="text-xs sm:text-sm text-slate-300">Apakah Anda yakin?</p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeCustomConfirm(false)" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition border border-slate-700">Batal</button>
+                <button id="confirmModalYesBtn" onclick="closeCustomConfirm(true)" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-xs">
+    <footer class="bg-slate-950 border-t border-slate-900 py-6 text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-                <span class="font-bold text-slate-200">Harga Promosi (The Price of Promotion)</span>
+                <span class="font-bold text-slate-300">Harga Promosi (The Price of Promotion)</span>
                 <span>• Edisi Indonesia 2025/2026</span>
             </div>
-            <p class="text-center sm:text-right">
-                Dirancang untuk Kelas Bisnis SMA (IPEKA, Edexcel IGCSE/IAL) • Berdasarkan benchmark riset media Indonesia.
+            <p class="text-center sm:text-right text-slate-600">
+                Dirancang untuk Kelas Bisnis SMA (IPEKA, Pearson Edexcel IGCSE & IAL) • Berdasarkan benchmark riset media Indonesia.
             </p>
         </div>
     </footer>
 
     <script>
-        // Comprehensive Indonesian Promotional Methods Database (Realistic 2025-2026 Prices)
+        // Comprehensive Indonesian Promotional Methods Database (Realistic 2025-2026 Market Prices)
         const PROMO_DATABASE = [
             {
                 id: 1,
@@ -477,7 +519,7 @@
                 category: "ATL",
                 description: "Biaya slot tayang iklan audio durasi 30 detik sebanyak 20 kali pada jam sibuk (prime time) di stasiun radio populer Jakarta.",
                 realCost: 15000000,
-                minCost: 80000000 / 10, // 8.000.000
+                minCost: 8000000,
                 maxCost: 25000000,
                 teachingNote: "Efektif menjangkau pendengar komuter mobil/kendaraan di jam berangkat-pulang kerja. Membutuhkan pengulangan (*frequency*) agar diingat.",
                 terms: ["Audio Marketing", "Commuter Audience", "Frequency & Reach"]
@@ -583,30 +625,29 @@
             }
         ];
 
+        const TEAM_THEMES = [
+            { bg: "bg-indigo-600", border: "border-indigo-500", text: "text-indigo-400", bgLight: "bg-indigo-950/60", badgeBg: "bg-indigo-900", accent: "#6366f1" },
+            { bg: "bg-amber-500", border: "border-amber-500", text: "text-amber-400", bgLight: "bg-amber-950/60", badgeBg: "bg-amber-900", accent: "#f59e0b" },
+            { bg: "bg-emerald-600", border: "border-emerald-500", text: "text-emerald-400", bgLight: "bg-emerald-950/60", badgeBg: "bg-emerald-900", accent: "#10b981" },
+            { bg: "bg-rose-600", border: "border-rose-500", text: "text-rose-400", bgLight: "bg-rose-950/60", badgeBg: "bg-rose-900", accent: "#f43f5e" },
+            { bg: "bg-cyan-600", border: "border-cyan-500", text: "text-cyan-400", bgLight: "bg-cyan-950/60", badgeBg: "bg-cyan-900", accent: "#06b6d4" }
+        ];
+
         // Game State Variables
         let gameState = {
             totalRounds: 5,
             currentRoundIndex: 0,
             mode: 'solo', // 'solo' or 'team'
-            teams: [
-                { name: "Pemain 1", score: 0, color: "bg-indigo-600", text: "text-indigo-600" }
-            ],
-            currentTeamTurn: 0,
+            teams: [],
             roundsData: [],
             soundEnabled: true,
-            userGuess: 0,
-            selectedChoice: null
+            // Round turn state storing answers for all teams in current round
+            currentRoundSubmissions: {} // { teamIndex: { guess: number, choiceIndex: number, locked: boolean } }
         };
 
-        const TEAM_COLORS = [
-            { bg: "bg-indigo-600", border: "border-indigo-600", text: "text-indigo-600", light: "bg-indigo-50" },
-            { bg: "bg-amber-500", border: "border-amber-500", text: "text-amber-600", light: "bg-amber-50" },
-            { bg: "bg-emerald-600", border: "border-emerald-600", text: "text-emerald-600", light: "bg-emerald-50" },
-            { bg: "bg-rose-600", border: "border-rose-600", text: "text-rose-600", light: "bg-rose-50" },
-            { bg: "bg-cyan-600", border: "border-cyan-600", text: "text-cyan-600", light: "bg-cyan-50" }
-        ];
+        // Confirmation Modal Callback reference
+        let customConfirmCallback = null;
 
-        // Synthetic Sound Effects Generator (no external audio assets needed)
         const AudioFX = {
             ctx: null,
             init() {
@@ -616,61 +657,100 @@
             },
             playClick() {
                 if (!gameState.soundEnabled) return;
-                this.init();
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.05);
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.05);
-            },
-            playSuccess() {
-                if (!gameState.soundEnabled) return;
-                this.init();
-                const now = this.ctx.currentTime;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(now + 0.4);
-            },
-            playFanfare() {
-                if (!gameState.soundEnabled) return;
-                this.init();
-                const now = this.ctx.currentTime;
-                [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                try {
+                    this.init();
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-                    gain.gain.setValueAtTime(0.25, now + idx * 0.08);
-                    gain.gain.linearRampToValueAtTime(0.01, now + idx * 0.08 + 0.3);
+                    osc.frequency.setValueAtTime(450, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(850, this.ctx.currentTime + 0.04);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.04);
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
-                    osc.start(now + idx * 0.08);
-                    osc.stop(now + idx * 0.08 + 0.3);
-                });
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.04);
+                } catch (e) {}
+            },
+            playSuccess() {
+                if (!gameState.soundEnabled) return;
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(now + 0.35);
+                } catch (e) {}
+            },
+            playFanfare() {
+                if (!gameState.soundEnabled) return;
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                        gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+                        gain.gain.linearRampToValueAtTime(0.01, now + idx * 0.08 + 0.25);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + idx * 0.08);
+                        osc.stop(now + idx * 0.08 + 0.25);
+                    });
+                } catch (e) {}
             }
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            renderTeamInputs(2);
+            renderTeamInputs(3);
             populateTeacherCatalog();
         });
 
-        // Toggle Sound State
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-3 rounded-2xl text-xs font-bold text-white shadow-xl backdrop-blur-md flex items-center gap-2 transition-all transform translate-y-2 opacity-0 pointer-events-auto border ${
+                type === 'error' ? 'bg-rose-900/90 border-rose-700' : 'bg-indigo-900/90 border-indigo-700'
+            }`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation text-rose-400' : 'fa-circle-info text-amber-400'}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showCustomConfirm(title, message, callback) {
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalMessage').innerText = message;
+            customConfirmCallback = callback;
+            document.getElementById('customConfirmModal').classList.remove('hidden');
+        }
+
+        function closeCustomConfirm(confirmed) {
+            document.getElementById('customConfirmModal').classList.add('hidden');
+            if (confirmed && typeof customConfirmCallback === 'function') {
+                customConfirmCallback();
+            }
+            customConfirmCallback = null;
+        }
+
         function toggleSound() {
             gameState.soundEnabled = !gameState.soundEnabled;
             const icon = document.getElementById('soundIcon');
@@ -680,16 +760,15 @@
                 text.innerText = 'Suara: ON';
                 AudioFX.playClick();
             } else {
-                icon.className = 'fa-solid fa-volume-xmark text-slate-400';
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
                 text.innerText = 'Suara: OFF';
             }
         }
 
-        // Toggle Fullscreen
         function toggleFullscreen() {
             AudioFX.playClick();
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => console.log(err));
+                document.documentElement.requestFullscreen().catch(() => {});
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -697,20 +776,18 @@
             }
         }
 
-        // Round selection setup UI
         function selectRounds(num) {
             AudioFX.playClick();
             gameState.totalRounds = num;
             document.querySelectorAll('.round-select-btn').forEach(btn => {
-                btn.className = "round-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex flex-col items-center border-slate-200 hover:border-indigo-300 text-slate-700";
+                btn.className = "round-select-btn py-3 px-4 rounded-2xl font-bold border-2 text-center transition flex flex-col items-center border-slate-700 bg-slate-800/40 hover:border-slate-500 text-slate-300";
             });
             const activeBtn = document.getElementById(`roundsBtn${num}`);
             if (activeBtn) {
-                activeBtn.className = "round-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex flex-col items-center border-indigo-600 bg-indigo-50 text-indigo-700";
+                activeBtn.className = "round-select-btn py-3 px-4 rounded-2xl font-bold border-2 text-center transition flex flex-col items-center border-indigo-500 bg-indigo-900/40 text-indigo-200";
             }
         }
 
-        // Mode selection setup UI
         function selectMode(mode) {
             AudioFX.playClick();
             gameState.mode = mode;
@@ -719,17 +796,16 @@
             const teamContainer = document.getElementById('teamSetupContainer');
 
             if (mode === 'solo') {
-                soloBtn.className = "mode-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-indigo-600 bg-indigo-50 text-indigo-700";
-                teamBtn.className = "mode-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-slate-200 hover:border-indigo-300 text-slate-700";
+                soloBtn.className = "mode-select-btn py-3.5 px-4 rounded-2xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-indigo-500 bg-indigo-900/40 text-indigo-200";
+                teamBtn.className = "mode-select-btn py-3.5 px-4 rounded-2xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-slate-700 bg-slate-800/40 hover:border-slate-500 text-slate-300";
                 teamContainer.classList.add('hidden');
             } else {
-                teamBtn.className = "mode-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-indigo-600 bg-indigo-50 text-indigo-700";
-                soloBtn.className = "mode-select-btn py-3 px-4 rounded-xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-slate-200 hover:border-indigo-300 text-slate-700";
+                teamBtn.className = "mode-select-btn py-3.5 px-4 rounded-2xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-indigo-500 bg-indigo-900/40 text-indigo-200";
+                soloBtn.className = "mode-select-btn py-3.5 px-4 rounded-2xl font-bold border-2 text-center transition flex items-center justify-center gap-2 border-slate-700 bg-slate-800/40 hover:border-slate-500 text-slate-300";
                 teamContainer.classList.remove('hidden');
             }
         }
 
-        // Team count changer
         function changeTeamCount(delta) {
             AudioFX.playClick();
             let count = parseInt(document.getElementById('teamCountDisplay').innerText);
@@ -742,11 +818,11 @@
             const container = document.getElementById('teamNamesInputs');
             container.innerHTML = '';
             for (let i = 0; i < count; i++) {
-                const color = TEAM_COLORS[i % TEAM_COLORS.length];
+                const theme = TEAM_THEMES[i % TEAM_THEMES.length];
                 container.innerHTML += `
-                    <div class="flex items-center space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                        <span class="w-4 h-4 rounded-full ${color.bg} flex-shrink-0"></span>
-                        <input type="text" id="teamNameInput_${i}" value="Tim ${String.fromCharCode(65 + i)}" class="bg-transparent text-sm font-bold text-slate-800 w-full focus:outline-none">
+                    <div class="flex items-center space-x-2 bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                        <span class="w-3.5 h-3.5 rounded-full ${theme.bg} flex-shrink-0"></span>
+                        <input type="text" id="teamNameInput_${i}" value="Tim ${String.fromCharCode(65 + i)}" class="bg-transparent text-xs font-bold text-white w-full focus:outline-none">
                     </div>
                 `;
             }
@@ -754,10 +830,10 @@
 
         function startGame() {
             AudioFX.playSuccess();
-            
-            // Build teams
+
+            // Build teams array
             if (gameState.mode === 'solo') {
-                gameState.teams = [{ name: "Pemain", score: 0, color: TEAM_COLORS[0].bg, text: TEAM_COLORS[0].text }];
+                gameState.teams = [{ name: "Pemain", score: 0, theme: TEAM_THEMES[0] }];
             } else {
                 const count = parseInt(document.getElementById('teamCountDisplay').innerText);
                 gameState.teams = [];
@@ -767,19 +843,15 @@
                     gameState.teams.push({
                         name: name,
                         score: 0,
-                        color: TEAM_COLORS[i % TEAM_COLORS.length].bg,
-                        text: TEAM_COLORS[i % TEAM_COLORS.length].text
+                        theme: TEAM_THEMES[i % TEAM_THEMES.length]
                     });
                 }
             }
 
             gameState.currentRoundIndex = 0;
-            gameState.currentTeamTurn = 0;
-
-            // Generate Rounds Data
             gameState.roundsData = generateRoundsData(gameState.totalRounds);
 
-            // Switch Screen
+            // Switch Screen UI
             document.getElementById('setupScreen').classList.add('hidden');
             document.getElementById('resultsScreen').classList.add('hidden');
             document.getElementById('gameplayScreen').classList.remove('hidden');
@@ -787,16 +859,12 @@
             renderRound();
         }
 
-        // Generate dynamic deck of rounds mixing "Guess Cost" & "Which costs less/more?"
         function generateRoundsData(total) {
-            // Shuffle dataset
             let shuffled = [...PROMO_DATABASE].sort(() => 0.5 - Math.random());
             let deck = [];
 
             for (let i = 0; i < total; i++) {
                 let item = shuffled[i % shuffled.length];
-                
-                // Alternate round types (0 = Guess Cost, 1 = Comparison Choice)
                 let type = (i % 2 === 0) ? 'guess' : 'choice';
 
                 if (type === 'guess') {
@@ -805,11 +873,8 @@
                         item: item
                     });
                 } else {
-                    // Pick 2 comparison items
                     let otherItems = PROMO_DATABASE.filter(x => x.id !== item.id);
                     let partner = otherItems[Math.floor(Math.random() * otherItems.length)];
-                    
-                    // Determine condition: "Mana yang LEBIH MURAH?" or "Mana yang LEBIH MAHAL?"
                     let isCheaperQuestion = Math.random() > 0.5;
 
                     deck.push({
@@ -824,121 +889,269 @@
 
         function renderRound() {
             const currentRound = gameState.roundsData[gameState.currentRoundIndex];
-            const currentTeam = gameState.teams[gameState.currentTeamTurn];
-
-            // Header info
-            document.getElementById('roundIndicator').innerText = `Ronde ${gameState.currentRoundIndex + 1} dari ${gameState.totalRounds}`;
             
-            // Turn indicator
-            const activeTurnBadge = document.getElementById('activeTurnBadge');
-            if (gameState.mode === 'team') {
-                activeTurnBadge.classList.remove('hidden');
-                document.getElementById('currentTurnName').innerText = currentTeam.name;
-            } else {
-                activeTurnBadge.classList.add('hidden');
-            }
+            // Header information
+            document.getElementById('roundIndicator').innerText = `Ronde ${gameState.currentRoundIndex + 1} dari ${gameState.totalRounds}`;
+            renderMiniLeaderboard();
 
-            // Render mini scoreboard
-            renderMiniScoreboard();
+            // Reset current turn submission state
+            gameState.currentRoundSubmissions = {};
+            gameState.teams.forEach((_, idx) => {
+                gameState.currentRoundSubmissions[idx] = {
+                    guess: 0,
+                    choiceIndex: null,
+                    locked: false
+                };
+            });
 
-            // Reset interaction areas
-            document.getElementById('guessCostContainer').classList.add('hidden');
-            document.getElementById('choiceContainer').classList.add('hidden');
-            document.getElementById('currencyInput').value = '';
+            // UI Sections Reset
+            document.getElementById('guessCostSection').classList.add('hidden');
+            document.getElementById('choiceSection').classList.add('hidden');
 
             if (currentRound.type === 'guess') {
                 const item = currentRound.item;
-                document.getElementById('questionTypeIcon').className = "fa-solid fa-calculator text-indigo-600";
+                document.getElementById('questionTypeIcon').className = "fa-solid fa-calculator text-indigo-400";
                 document.getElementById('questionTypeLabel').innerText = "TEBAK BIAYA PROMOSI (DALAM RUPIAH)";
                 document.getElementById('categoryBadge').innerText = `${item.category} METHOD`;
                 document.getElementById('questionTitle').innerText = item.title;
                 document.getElementById('questionDescription').innerText = item.description;
 
-                document.getElementById('guessCostContainer').classList.remove('hidden');
+                renderTeamsGuessGrid();
+                document.getElementById('guessCostSection').classList.remove('hidden');
             } else {
-                // Choice comparison type
                 const opts = currentRound.options;
                 const isCheaper = currentRound.isCheaperQuestion;
-                
-                document.getElementById('questionTypeIcon').className = "fa-solid fa-scale-balanced text-amber-500";
+
+                document.getElementById('questionTypeIcon').className = "fa-solid fa-scale-balanced text-amber-400";
                 document.getElementById('questionTypeLabel').innerText = "PERBANDINGAN ANGGARAN PROMOSI";
-                document.getElementById('categoryBadge').innerText = "ANALISIS BIAYA";
-                
+                document.getElementById('categoryBadge').innerText = "ANALISIS STRATEGI";
+
                 document.getElementById('questionTitle').innerText = isCheaper ? 
-                    "Metode manakah yang memakan BIAYA LEBIH MURAH?" : 
-                    "Metode manakah yang memakan BIAYA LEBIH MAHAL?";
+                    "Metode Manakah yang Memakan BIAYA LEBIH MURAH?" : 
+                    "Metode Manakah yang Memakan BIAYA LEBIH MAHAL?";
                 
-                document.getElementById('questionDescription').innerText = "Bandingkan estimasi biaya nyata kedua strategi promosi berikut di pasar Indonesia:";
+                document.getElementById('questionDescription').innerText = "Bandingkan estimasi biaya pasar nyata dari kedua opsi strategi berikut:";
 
-                // Render option cards
-                const grid = document.getElementById('choiceOptionsGrid');
-                grid.innerHTML = '';
-                opts.forEach((opt, idx) => {
-                    grid.innerHTML += `
-                        <div onclick="selectChoiceOption(${idx})" id="choiceCard_${idx}" class="choice-card bg-slate-50 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-5 cursor-pointer transition space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="px-2.5 py-1 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">Opsi ${String.fromCharCode(65 + idx)}</span>
-                                <span class="text-xs font-semibold text-slate-500">${opt.category}</span>
-                            </div>
-                            <h4 class="font-extrabold text-slate-900 text-lg leading-snug">${opt.title}</h4>
-                            <p class="text-xs text-slate-600 line-clamp-3">${opt.description}</p>
-                            <button class="w-full py-2.5 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 text-sm hover:bg-indigo-600 hover:text-white transition">
-                                Pilih Opsi Ini
-                            </button>
-                        </div>
-                    `;
-                });
-
-                document.getElementById('choiceContainer').classList.remove('hidden');
+                renderChoiceOptionsVisual(opts);
+                renderTeamsChoiceGrid(opts);
+                document.getElementById('choiceSection').classList.remove('hidden');
             }
+
+            updateLockStatusCounter();
         }
 
-        function renderMiniScoreboard() {
-            const container = document.getElementById('miniScoreboard');
+        function renderMiniLeaderboard() {
+            const container = document.getElementById('miniLeaderboardContainer');
             container.innerHTML = '';
-            gameState.teams.forEach((t, i) => {
-                const isActive = (gameState.mode === 'team' && i === gameState.currentTeamTurn);
+            
+            // Sort copy of teams for display ranking
+            const sorted = [...gameState.teams].sort((a, b) => b.score - a.score);
+
+            sorted.forEach((team) => {
                 container.innerHTML += `
-                    <div class="px-3 py-1 rounded-xl ${t.color} text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm ${isActive ? 'ring-2 ring-offset-2 ring-amber-400' : 'opacity-80'}">
-                        <span>${t.name}:</span>
-                        <span class="font-black">${t.score} pt</span>
+                    <div class="px-3 py-1 rounded-xl ${team.theme.badgeBg} border ${team.theme.border} text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm flex-shrink-0">
+                        <span class="text-slate-300">${team.name}:</span>
+                        <span class="${team.theme.text} font-black">${team.score} pt</span>
                     </div>
                 `;
             });
         }
 
-        function formatRupiahInput(input) {
-            let value = input.value.replace(/[^0-9]/g, '');
-            if (value) {
-                input.value = parseInt(value, 10).toLocaleString('id-ID');
+        function renderTeamsGuessGrid() {
+            const grid = document.getElementById('teamsGuessGrid');
+            grid.innerHTML = '';
+
+            gameState.teams.forEach((team, idx) => {
+                grid.innerHTML += `
+                    <div id="teamGuessCard_${idx}" class="glass-card rounded-2xl p-5 border ${team.theme.border} ${team.theme.bgLight} space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full ${team.theme.bg}"></span>
+                                <h4 class="font-extrabold text-white text-base">${team.name}</h4>
+                            </div>
+                            <button type="button" onclick="toggleLockGuess(${idx})" id="lockBtn_${idx}" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition flex items-center gap-1">
+                                <i class="fa-solid fa-lock-open text-slate-400" id="lockIcon_${idx}"></i> <span id="lockText_${idx}">Kunci</span>
+                            </button>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold uppercase text-slate-400">Tebakan Nominal (Rp):</label>
+                            <div class="flex items-center bg-slate-950 rounded-xl px-3 py-2 border border-slate-800 focus-within:border-indigo-500">
+                                <span class="text-lg font-black text-amber-400 mr-2">Rp</span>
+                                <input type="text" id="teamInput_${idx}" placeholder="0" class="text-xl font-black text-white bg-transparent w-full focus:outline-none tracking-tight" oninput="handleTeamCurrencyInput(${idx}, this)">
+                            </div>
+                        </div>
+
+                        <!-- Quick Increment Buttons -->
+                        <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                            <button type="button" onclick="addAmountToTeam(${idx}, 100000)" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition">+100 Rb</button>
+                            <button type="button" onclick="addAmountToTeam(${idx}, 500000)" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition">+500 Rb</button>
+                            <button type="button" onclick="addAmountToTeam(${idx}, 1000000)" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition">+1 Juta</button>
+                            <button type="button" onclick="addAmountToTeam(${idx}, 10000000)" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition">+10 Juta</button>
+                            <button type="button" onclick="clearTeamAmount(${idx})" class="px-2 py-1 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-xs font-semibold transition"><i class="fa-solid fa-rotate-left"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function handleTeamCurrencyInput(teamIdx, input) {
+            let raw = input.value.replace(/[^0-9]/g, '');
+            if (raw) {
+                let val = parseInt(raw, 10);
+                input.value = val.toLocaleString('id-ID');
+                gameState.currentRoundSubmissions[teamIdx].guess = val;
             } else {
                 input.value = '';
+                gameState.currentRoundSubmissions[teamIdx].guess = 0;
             }
         }
 
-        function addAmount(amount) {
+        function addAmountToTeam(teamIdx, amount) {
+            if (gameState.currentRoundSubmissions[teamIdx].locked) return;
             AudioFX.playClick();
-            const input = document.getElementById('currencyInput');
-            let currentVal = parseInt(input.value.replace(/[^0-9]/g, ''), 10) || 0;
+            const input = document.getElementById(`teamInput_${teamIdx}`);
+            let currentVal = gameState.currentRoundSubmissions[teamIdx].guess || 0;
             currentVal += amount;
+            gameState.currentRoundSubmissions[teamIdx].guess = currentVal;
             input.value = currentVal.toLocaleString('id-ID');
         }
 
-        function clearAmount() {
+        function clearTeamAmount(teamIdx) {
+            if (gameState.currentRoundSubmissions[teamIdx].locked) return;
             AudioFX.playClick();
-            document.getElementById('currencyInput').value = '';
+            gameState.currentRoundSubmissions[teamIdx].guess = 0;
+            document.getElementById(`teamInput_${teamIdx}`).value = '';
+        }
+
+        function toggleLockGuess(teamIdx) {
+            AudioFX.playClick();
+            const sub = gameState.currentRoundSubmissions[teamIdx];
+            if (sub.guess <= 0 && !sub.locked) {
+                showToast(`Masukkan tebakan angka untuk ${gameState.teams[teamIdx].name} terlebih dahulu!`, 'error');
+                return;
+            }
+
+            sub.locked = !sub.locked;
+            const btn = document.getElementById(`lockBtn_${teamIdx}`);
+            const icon = document.getElementById(`lockIcon_${teamIdx}`);
+            const text = document.getElementById(`lockText_${teamIdx}`);
+            const input = document.getElementById(`teamInput_${teamIdx}`);
+
+            if (sub.locked) {
+                btn.className = "px-2.5 py-1 rounded-lg bg-emerald-900 text-emerald-300 text-xs font-bold border border-emerald-700 transition flex items-center gap-1";
+                icon.className = "fa-solid fa-lock text-emerald-400";
+                text.innerText = "Terkunci";
+                input.disabled = true;
+            } else {
+                btn.className = "px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition flex items-center gap-1";
+                icon.className = "fa-solid fa-lock-open text-slate-400";
+                text.innerText = "Kunci";
+                input.disabled = false;
+            }
+
+            updateLockStatusCounter();
+        }
+
+        function updateLockStatusCounter() {
+            const total = gameState.teams.length;
+            let lockedCount = 0;
+            Object.values(gameState.currentRoundSubmissions).forEach(s => {
+                if (s.locked || s.choiceIndex !== null) lockedCount++;
+            });
+            const el = document.getElementById('lockStatusCount');
+            if (el) {
+                el.innerText = `${lockedCount} dari ${total} Tim Mengunci Jawaban`;
+            }
+        }
+
+        function renderChoiceOptionsVisual(options) {
+            const container = document.getElementById('choiceOptionsVisualGrid');
+            container.innerHTML = '';
+            options.forEach((opt, idx) => {
+                container.innerHTML += `
+                    <div class="glass-card rounded-2xl p-5 border border-slate-700 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-lg bg-indigo-950 text-indigo-300 font-extrabold text-xs border border-indigo-800">Opsi ${String.fromCharCode(65 + idx)}</span>
+                            <span class="text-xs font-semibold text-slate-400">${opt.category}</span>
+                        </div>
+                        <h4 class="font-extrabold text-white text-base leading-snug">${opt.title}</h4>
+                        <p class="text-xs text-slate-300 line-clamp-3">${opt.description}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function renderTeamsChoiceGrid(options) {
+            const grid = document.getElementById('teamsChoiceGrid');
+            grid.innerHTML = '';
+
+            gameState.teams.forEach((team, teamIdx) => {
+                let optionsBtns = options.map((_, optIdx) => `
+                    <button type="button" onclick="selectTeamChoice(${teamIdx}, ${optIdx})" id="choiceBtn_${teamIdx}_${optIdx}" class="flex-1 py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 font-bold text-xs hover:border-indigo-500 transition">
+                        Opsi ${String.fromCharCode(65 + optIdx)}
+                    </button>
+                `).join('');
+
+                grid.innerHTML += `
+                    <div class="glass-card rounded-2xl p-4 border ${team.theme.border} ${team.theme.bgLight} space-y-3">
+                        <div class="flex items-center space-x-2 border-b border-slate-800 pb-2">
+                            <span class="w-3 h-3 rounded-full ${team.theme.bg}"></span>
+                            <h4 class="font-extrabold text-white text-sm">${team.name}</h4>
+                        </div>
+                        <p class="text-xs text-slate-400">Pilih Opsi Strategi:</p>
+                        <div class="flex gap-2">
+                            ${optionsBtns}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectTeamChoice(teamIdx, optIdx) {
+            AudioFX.playClick();
+            gameState.currentRoundSubmissions[teamIdx].choiceIndex = optIdx;
+
+            // Highlight active button
+            const totalOpts = gameState.roundsData[gameState.currentRoundIndex].options.length;
+            for (let i = 0; i < totalOpts; i++) {
+                const btn = document.getElementById(`choiceBtn_${teamIdx}_${i}`);
+                if (i === optIdx) {
+                    btn.className = "flex-1 py-2.5 px-3 rounded-xl border border-amber-500 bg-amber-500 text-slate-950 font-black text-xs shadow-md transition";
+                } else {
+                    btn.className = "flex-1 py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 font-bold text-xs hover:border-indigo-500 transition";
+                }
+            }
+            updateLockStatusCounter();
         }
 
         function formatRp(num) {
             return 'Rp ' + num.toLocaleString('id-ID');
         }
 
-        function submitGuessCost() {
-            const input = document.getElementById('currencyInput');
-            let userVal = parseInt(input.value.replace(/[^0-9]/g, ''), 10);
+        function calculateGuessAccuracyAndPoints(guess, realCost) {
+            let diff = Math.abs(guess - realCost);
+            let percentOff = diff / realCost;
+            let points = 0;
 
-            if (isNaN(userVal) || userVal <= 0) {
-                alert('Silakan masukkan tebakan nominal Rupiah terlebih dahulu!');
+            if (percentOff <= 0.05) points = 1000;
+            else if (percentOff <= 0.10) points = 900;
+            else if (percentOff <= 0.20) points = 750;
+            else if (percentOff <= 0.35) points = 500;
+            else if (percentOff <= 0.50) points = 300;
+            else if (percentOff <= 0.75) points = 150;
+            else if (percentOff <= 1.00) points = 50;
+            else points = 0;
+
+            let accuracyPercent = Math.max(0, Math.round((1 - percentOff) * 100));
+            return { points, accuracyPercent, percentOff };
+        }
+
+        function submitAllGuessCost() {
+            // Check if any team has 0 guess
+            let unentered = gameState.teams.filter((_, idx) => gameState.currentRoundSubmissions[idx].guess <= 0);
+            if (unentered.length > 0) {
+                showToast(`Harap isi tebakan harga untuk semua tim sebelum membuka hasil!`, 'error');
                 return;
             }
 
@@ -946,82 +1159,107 @@
             const currentRound = gameState.roundsData[gameState.currentRoundIndex];
             const realCost = currentRound.item.realCost;
 
-            // Calculate percentage error and points (Max 1000 pts)
-            let diff = Math.abs(userVal - realCost);
-            let percentOff = (diff / realCost);
-            let points = Math.max(0, Math.round(1000 * Math.max(0, (1 - percentOff * 0.8))));
+            // Build Reveal Results
+            const tableBody = document.getElementById('teamsRevealTableBody');
+            tableBody.innerHTML = '';
 
-            // Award points
-            gameState.teams[gameState.currentTeamTurn].score += points;
+            gameState.teams.forEach((team, idx) => {
+                const sub = gameState.currentRoundSubmissions[idx];
+                const res = calculateGuessAccuracyAndPoints(sub.guess, realCost);
+                
+                // Add points to team score
+                team.score += res.points;
 
-            // Prepare Reveal UI
-            document.getElementById('revealTitle').innerText = "Hasil Tebakan Biaya";
-            document.getElementById('userGuessDisplay').innerText = formatRp(userVal);
+                let statusBadge = '';
+                if (res.percentOff <= 0.15) {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 font-bold text-xs border border-emerald-700">Sangat Akurat (${res.accuracyPercent}%)</span>`;
+                } else if (res.percentOff <= 0.40) {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-amber-950 text-amber-400 font-bold text-xs border border-amber-700">Cukup Dekat (${res.accuracyPercent}%)</span>`;
+                } else {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-rose-950 text-rose-400 font-bold text-xs border border-rose-700">Meleset (${res.accuracyPercent}%)</span>`;
+                }
+
+                tableBody.innerHTML += `
+                    <tr class="border-b border-slate-800/60">
+                        <td class="p-3 font-extrabold text-white flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full ${team.theme.bg}"></span>
+                            ${team.name}
+                        </td>
+                        <td class="p-3 font-bold text-amber-300">${formatRp(sub.guess)}</td>
+                        <td class="p-3">${statusBadge}</td>
+                        <td class="p-3 text-right font-black text-indigo-400 text-base">+${res.points} pt</td>
+                    </tr>
+                `;
+            });
+
+            // Reveal Modal Header & Teaching Note
+            document.getElementById('revealTitle').innerText = "Hasil Tebakan Biaya Promosi";
             document.getElementById('realCostDisplay').innerText = formatRp(realCost);
             document.getElementById('typicalRangeDisplay').innerText = `${formatRp(currentRound.item.minCost)} – ${formatRp(currentRound.item.maxCost)}`;
             document.getElementById('teachingNoteText').innerText = currentRound.item.teachingNote;
-
-            // Points text
-            document.getElementById('teamScoreEarnedText').innerHTML = 
-                `${gameState.teams[gameState.currentTeamTurn].name} memperoleh <strong class="text-indigo-600 font-extrabold text-base">${points} Poin</strong> (Akurasi: ${Math.round(Math.max(0, (1 - percentOff) * 100))}%).`;
-
-            // Result Badge
-            const badge = document.getElementById('resultBadge');
-            if (percentOff <= 0.15) {
-                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800";
-                badge.innerText = "Luar Biasa Sangat Akurat! 🎉";
-            } else if (percentOff <= 0.40) {
-                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-800";
-                badge.innerText = "Tebakan Cukup Dekat! 👍";
-            } else {
-                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-rose-100 text-rose-800";
-                badge.innerText = "Perkiraan Masih Meleset 😅";
-            }
 
             renderBusinessTerms(currentRound.item.terms);
             document.getElementById('revealModal').classList.remove('hidden');
         }
 
-        function selectChoiceOption(idx) {
+        function submitAllChoices() {
+            // Check if any team hasn't selected an option
+            let unselected = gameState.teams.filter((_, idx) => gameState.currentRoundSubmissions[idx].choiceIndex === null);
+            if (unselected.length > 0) {
+                showToast(`Harap pilih opsi untuk semua tim sebelum melanjutkan!`, 'error');
+                return;
+            }
+
             AudioFX.playSuccess();
             const currentRound = gameState.roundsData[gameState.currentRoundIndex];
-            const selectedItem = currentRound.options[idx];
-            const otherItem = currentRound.options[idx === 0 ? 1 : 0];
+            const opts = currentRound.options;
+            const isCheaper = currentRound.isCheaperQuestion;
 
-            let isCorrect = false;
-            if (currentRound.isCheaperQuestion) {
-                isCorrect = selectedItem.realCost <= otherItem.realCost;
+            // Find correct option index
+            let correctOptIdx = 0;
+            if (isCheaper) {
+                correctOptIdx = opts[0].realCost <= opts[1].realCost ? 0 : 1;
             } else {
-                isCorrect = selectedItem.realCost >= otherItem.realCost;
+                correctOptIdx = opts[0].realCost >= opts[1].realCost ? 0 : 1;
             }
 
-            let points = isCorrect ? 1000 : 250;
-            gameState.teams[gameState.currentTeamTurn].score += points;
+            const correctItem = opts[correctOptIdx];
+            const incorrectItem = opts[correctOptIdx === 0 ? 1 : 0];
 
-            // Prepare Reveal UI
-            document.getElementById('revealTitle').innerText = isCorrect ? "Jawaban Anda BENAR! 🎯" : "Jawaban Kurang Tepat! 💡";
-            
-            document.getElementById('userGuessDisplay').innerText = `${selectedItem.title} (${formatRp(selectedItem.realCost)})`;
-            document.getElementById('realCostDisplay').innerText = `${otherItem.title} (${formatRp(otherItem.realCost)})`;
-            
-            document.getElementById('typicalRangeDisplay').innerText = `Selisih Biaya: ${formatRp(Math.abs(selectedItem.realCost - otherItem.realCost))}`;
-            
-            document.getElementById('teachingNoteText').innerText = 
-                `Pilihan Benar: ${isCorrect ? selectedItem.title : otherItem.title}. ${selectedItem.teachingNote}`;
+            const tableBody = document.getElementById('teamsRevealTableBody');
+            tableBody.innerHTML = '';
 
-            document.getElementById('teamScoreEarnedText').innerHTML = 
-                `${gameState.teams[gameState.currentTeamTurn].name} memperoleh <strong class="text-indigo-600 font-extrabold text-base">${points} Poin</strong>.`;
+            gameState.teams.forEach((team, idx) => {
+                const sub = gameState.currentRoundSubmissions[idx];
+                const isCorrect = (sub.choiceIndex === correctOptIdx);
+                const points = isCorrect ? 1000 : 250;
 
-            const badge = document.getElementById('resultBadge');
-            if (isCorrect) {
-                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800";
-                badge.innerText = "Analisis Pemasaran Tepat!";
-            } else {
-                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-rose-100 text-rose-800";
-                badge.innerText = "Kurang Tepat";
-            }
+                team.score += points;
 
-            renderBusinessTerms(selectedItem.terms);
+                let statusBadge = isCorrect ? 
+                    `<span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 font-bold text-xs border border-emerald-700">BENAR 🎯</span>` : 
+                    `<span class="px-2 py-0.5 rounded-full bg-rose-950 text-rose-400 font-bold text-xs border border-rose-700">KURANG TEPAT 💡</span>`;
+
+                tableBody.innerHTML += `
+                    <tr class="border-b border-slate-800/60">
+                        <td class="p-3 font-extrabold text-white flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full ${team.theme.bg}"></span>
+                            ${team.name}
+                        </td>
+                        <td class="p-3 font-bold text-slate-300">Opsi ${String.fromCharCode(65 + sub.choiceIndex)}: ${opts[sub.choiceIndex].title}</td>
+                        <td class="p-3">${statusBadge}</td>
+                        <td class="p-3 text-right font-black text-indigo-400 text-base">+${points} pt</td>
+                    </tr>
+                `;
+            });
+
+            // Reveal Modal Info
+            document.getElementById('revealTitle').innerText = `Opsi Benar: Opsi ${String.fromCharCode(65 + correctOptIdx)} (${correctItem.title})`;
+            document.getElementById('realCostDisplay').innerText = formatRp(correctItem.realCost);
+            document.getElementById('typicalRangeDisplay').innerText = `Selisih Biaya: ${formatRp(Math.abs(correctItem.realCost - incorrectItem.realCost))}`;
+            document.getElementById('teachingNoteText').innerText = `${correctItem.title} (${formatRp(correctItem.realCost)}) vs ${incorrectItem.title} (${formatRp(incorrectItem.realCost)}). ${correctItem.teachingNote}`;
+
+            renderBusinessTerms(correctItem.terms);
             document.getElementById('revealModal').classList.remove('hidden');
         }
 
@@ -1031,7 +1269,7 @@
             if (terms && terms.length) {
                 terms.forEach(term => {
                     container.innerHTML += `
-                        <span class="px-2.5 py-1 rounded-lg bg-amber-200/60 text-amber-900 font-extrabold text-xs">
+                        <span class="px-2.5 py-0.5 rounded-lg bg-amber-950/80 text-amber-300 font-extrabold text-xs border border-amber-800/60">
                             # ${term}
                         </span>
                     `;
@@ -1042,11 +1280,6 @@
         function nextRound() {
             AudioFX.playClick();
             document.getElementById('revealModal').classList.add('hidden');
-
-            // Rotate turn if team mode
-            if (gameState.mode === 'team') {
-                gameState.currentTeamTurn = (gameState.currentTeamTurn + 1) % gameState.teams.length;
-            }
 
             gameState.currentRoundIndex++;
 
@@ -1060,11 +1293,11 @@
         function endGame() {
             AudioFX.playFanfare();
 
-            // Trigger confetti
+            // Trigger confetti animation
             if (typeof confetti === 'function') {
                 confetti({
-                    particleCount: 100,
-                    spread: 70,
+                    particleCount: 120,
+                    spread: 80,
                     origin: { y: 0.6 }
                 });
             }
@@ -1078,20 +1311,20 @@
             board.innerHTML = '';
 
             sortedTeams.forEach((team, idx) => {
-                let rankBadge = `<span class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-black flex items-center justify-center text-sm">${idx + 1}</span>`;
+                let rankBadge = `<span class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 font-black flex items-center justify-center text-xs sm:text-sm border border-slate-700">${idx + 1}</span>`;
                 if (idx === 0) rankBadge = `<span class="w-8 h-8 rounded-full bg-amber-400 text-slate-950 font-black flex items-center justify-center text-sm shadow-md">🥇</span>`;
                 if (idx === 1) rankBadge = `<span class="w-8 h-8 rounded-full bg-slate-300 text-slate-950 font-black flex items-center justify-center text-sm shadow-md">🥈</span>`;
                 if (idx === 2) rankBadge = `<span class="w-8 h-8 rounded-full bg-amber-700 text-white font-black flex items-center justify-center text-sm shadow-md">🥉</span>`;
 
                 board.innerHTML += `
-                    <div class="flex items-center justify-between p-4 rounded-2xl ${team.color} bg-opacity-10 border border-slate-200">
+                    <div class="flex items-center justify-between p-4 rounded-2xl glass-card border ${team.theme.border} ${team.theme.bgLight}">
                         <div class="flex items-center space-x-3">
                             ${rankBadge}
-                            <span class="font-extrabold text-slate-900 text-lg">${team.name}</span>
+                            <span class="font-extrabold text-white text-base sm:text-lg">${team.name}</span>
                         </div>
                         <div class="text-right">
-                            <span class="text-2xl font-black text-indigo-900">${team.score}</span>
-                            <span class="text-xs text-slate-500 font-bold block">Poin Total</span>
+                            <span class="text-2xl font-black text-amber-400">${team.score}</span>
+                            <span class="text-xs text-slate-400 font-bold block">Poin Total</span>
                         </div>
                     </div>
                 `;
@@ -1101,17 +1334,8 @@
         function restartGame() {
             AudioFX.playClick();
             document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('gameplayScreen').classList.add('hidden');
             document.getElementById('setupScreen').classList.remove('hidden');
-        }
-
-        function confirmReturnHome() {
-            if (!document.getElementById('gameplayScreen').classList.contains('hidden')) {
-                if (confirm('Apakah Anda yakin ingin keluar dari permainan dan kembali ke menu awal?')) {
-                    restartGame();
-                }
-            } else {
-                restartGame();
-            }
         }
 
         function toggleTeacherGuide() {
@@ -1126,17 +1350,17 @@
 
             PROMO_DATABASE.forEach(item => {
                 catalog.innerHTML += `
-                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
                         <div class="flex items-center justify-between">
-                            <span class="font-extrabold text-slate-900 text-sm">${item.id}. ${item.title}</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${item.category === 'ATL' ? 'bg-purple-100 text-purple-800' : item.category === 'BTL' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}">${item.category}</span>
+                            <span class="font-extrabold text-white text-xs sm:text-sm">${item.id}. ${item.title}</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${item.category === 'ATL' ? 'bg-purple-950 text-purple-300 border border-purple-800' : item.category === 'BTL' ? 'bg-blue-950 text-blue-300 border border-blue-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'}">${item.category}</span>
                         </div>
-                        <p class="text-xs text-slate-600">${item.description}</p>
-                        <div class="flex flex-wrap items-center justify-between pt-1 text-xs border-t border-slate-200/60">
-                            <span class="font-bold text-amber-700">Rata-rata: ${formatRp(item.realCost)}</span>
-                            <span class="text-slate-500">Kisaran: ${formatRp(item.minCost)} – ${formatRp(item.maxCost)}</span>
+                        <p class="text-xs text-slate-300 leading-relaxed">${item.description}</p>
+                        <div class="flex flex-wrap items-center justify-between pt-1 text-xs border-t border-slate-800">
+                            <span class="font-bold text-amber-400">Rata-rata Benchmark: ${formatRp(item.realCost)}</span>
+                            <span class="text-slate-400">Kisaran: ${formatRp(item.minCost)} – ${formatRp(item.maxCost)}</span>
                         </div>
-                        <p class="text-xs italic text-indigo-900 bg-indigo-50/60 p-2 rounded-lg">💡 ${item.teachingNote}</p>
+                        <p class="text-xs italic text-indigo-200 bg-indigo-950/40 p-2 rounded-xl border border-indigo-900/40">💡 ${item.teachingNote}</p>
                     </div>
                 `;
             });
